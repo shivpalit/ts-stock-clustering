@@ -3,3 +3,7 @@ __pycache__/
 .env
 .DS_Store
 archive/
+.conda/
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
