@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import yfinance
 from sklearn.preprocessing import MinMaxScaler
 from tslearn.clustering import TimeSeriesKMeans, KShape
@@ -181,3 +182,33 @@ class StockClusterer:
             "silhouette_score": self.score,
             "unclustered": self.unclustered,
         }
+
+    def plot(self, figsize=(14, 5)):
+        """Plot each cluster's time series with its cluster center."""
+        if self._df_list is None:
+            raise RuntimeError("Call fit() before plot().")
+
+        n = len(self._df_list)
+        fig, axes = plt.subplots(n, 1, figsize=(figsize[0], figsize[1] * n))
+
+        if n == 1:
+            axes = [axes]
+
+        for i, df in enumerate(self._df_list):
+            ax = axes[i]
+            tickers = [c for c in df.columns if c != "cluster_center"]
+            center = df["cluster_center"].values
+            x = range(len(center))
+
+            for ticker in tickers:
+                ax.plot(x, df[ticker].values, alpha=0.5, linewidth=1, label=ticker)
+
+            ax.plot(x, center, color="black", linewidth=2.5, linestyle="--", label="center")
+            ax.set_title(f"Cluster {i + 1}: {', '.join(tickers)}")
+            ax.legend(fontsize=7, ncol=4)
+            ax.set_xlabel("Time")
+            ax.set_ylabel(self.change_method)
+
+        plt.tight_layout()
+        plt.show()
+        return fig
