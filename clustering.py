@@ -58,6 +58,7 @@ class StockClusterer:
             end=self.date_range[1],
             interval="1d",
             progress=False,
+            auto_adjust=False
         )
         return df
 
